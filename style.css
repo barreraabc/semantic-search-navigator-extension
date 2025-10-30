@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+    width: 250px;
+    padding: 10px;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    padding: 5px;
+    font-size: 14px;
+}
+
+button {
+    padding: 5px;
+    cursor: pointer;
+}
+
+mark.search-highlight {
+    background-color: yellow;
+    color: black;
+    padding: 2px;
+}
+
+mark.active-highlight {
+    background-color: orange;
+}
