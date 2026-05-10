@@ -1,33 +1,9 @@
 let searchResults = [];
 let currentIndex = -1;
 
-// Function to highlight matches
-function findTextOnPage(query) {
-    removeHighlights(); // Clear previous highlights
-    searchResults = [];
-    currentIndex = -1;
+// Read the text content of the page
+let pageText = document.body?.innerText || '';
 
-    const regex = new RegExp(query, "gi");
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-
-    while (walker.nextNode()) {
-        const node = walker.currentNode;
-        if (node.nodeValue.match(regex)) {
-            const span = document.createElement("span");
-            span.innerHTML = node.nodeValue.replace(regex, (match) => `<mark class="search-highlight">${match}</mark>`);
-            node.parentNode.replaceChild(span, node);
-        }
-    }
-
-    searchResults = document.querySelectorAll(".search-highlight");
-
-    if (searchResults.length > 0) {
-        currentIndex = 0;
-        focusOnResult(currentIndex);
-    } else {
-        alert("No matches found.");
-    }
-}
 
 // Function to navigate through search results
 function navigateResults(direction) {
@@ -44,9 +20,35 @@ function focusOnResult(index) {
     searchResults[index].scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-// Function to remove highlights when a new search starts
-function removeHighlights() {
-    document.querySelectorAll(".search-highlight").forEach((el) => {
-        el.parentNode.replaceChild(document.createTextNode(el.textContent), el);
-    });
-}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    try {
+        if (message.action === 'getPageText') {
+            const text = (document.body?.innerText || '').trim();
+            sendResponse({ ok: true, text });
+            return;
+        }
+
+        if (message.action === 'exactSearch') {
+            const query = (message.query || '').trim();
+            if (!query) {
+                sendResponse({ ok: false, error: 'Missing query.' });
+                return;
+            }
+
+            const count = findTextOnPage(query);
+            sendResponse({ ok: true, found: count > 0, count });
+            return;
+        }
+
+        if (message.action === 'clearExactSearch') {
+            removeHighlights();
+            sendResponse({ ok: true });
+            return;
+        }
+
+        sendResponse({ ok: false, error: 'Unknown action.' });
+    } catch (error) {
+        sendResponse({ ok: false, error: error.message || 'Unexpected error.' });
+    }
+});

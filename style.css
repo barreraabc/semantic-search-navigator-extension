@@ -1,31 +1,140 @@
+:root {
+    color-scheme: light dark;
+    --bg: #f6f7f8;
+    --panel: #ffffff;
+    --text: #1f2328;
+    --border: #d0d7de;
+    --input-bg: #ffffff;
+    --input-border: #c2c8cf;
+    --btn-bg: #1f6feb;
+    --btn-text: #ffffff;
+    --btn-bg-hover: #1558c0;
+    --btn-delete-bg: #d1242f;
+    --btn-delete-hover: #b61d27;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #161b22;
+        --panel: #0d1117;
+        --text: #e6edf3;
+        --border: #30363d;
+        --input-bg: #161b22;
+        --input-border: #3d444d;
+        --btn-bg: #2f81f7;
+        --btn-text: #f0f6fc;
+        --btn-bg-hover: #1f6feb;
+        --btn-delete-bg: #f85149;
+        --btn-delete-hover: #da3633;
+    }
+}
+
 body {
-    font-family: Arial, sans-serif;
-    width: 250px;
-    padding: 10px;
+    margin: 0;
+    padding: 12px;
+    min-width: 340px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.search-container {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel);
 }
 
-input {
-    padding: 5px;
+.search-container h3 {
+    grid-column: 1 / -1;
+    margin: 0 0 2px;
     font-size: 14px;
+    line-height: 1.2;
+}
+
+#searchBar {
+    height: 36px;
+    min-width: 0;
+    padding: 0 10px;
+    font-size: 14px;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--text);
+}
+
+#searchBar:focus {
+    outline: 2px solid color-mix(in srgb, var(--btn-bg) 45%, transparent);
+    outline-offset: 1px;
 }
 
 button {
-    padding: 5px;
+    height: 36px;
+    border: 1px solid transparent;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
 }
 
-mark.search-highlight {
-    background-color: yellow;
+#searchBtn {
+    min-width: 86px;
+    padding: 0 12px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+}
+
+#searchBtn:hover:not(:disabled) {
+    background: var(--btn-bg-hover);
+}
+
+/* STYLE 1: Exact Match (Yellow) */
+.highlight-exact {
+    background-color: #ffeb3b;
     color: black;
-    padding: 2px;
+    font-weight: bold;
 }
 
-mark.active-highlight {
-    background-color: orange;
+/* STYLE 2: Fuzzy Match (Blue Underline) */
+.highlight-fuzzy {
+    background-color: #e3f2fd;
+    border-bottom: 2px solid #2196f3;
+    color: #0d47a1;
+}
+
+/* STYLE 3: Semantic Match (Purple Bold) */
+.highlight-semantic {
+    background-color: #e3f2fd;
+    color: #7c02a1;
+    font-weight: bold;
+}
+
+/* Button Styles */
+#deleteBtn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+    line-height: 1;
+    padding: 0;
+    text-align: center;
+    cursor: pointer;
+    background: var(--btn-delete-bg);
+    color: #ffffff;
+}
+
+#deleteBtn:hover:not(:disabled) {
+    background: var(--btn-delete-hover);
+}
+
+/* Visual cue for disabled buttons */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: color-mix(in srgb, var(--panel) 70%, var(--text) 30%);
+    border: 1px solid var(--border);
+    color: var(--text);
 }

@@ -1,2 +1,2 @@
-# semantic-search-navigator-extension
-Development of a searching tool navigator extension supported by literal search, cosine similarity (embeddings), string similarity and we will see if something more. But let's see if we can compute embeddings inside a navigator extension :^*
+# advanced-search-navigator-extension
+Searching tool navigator extension using literal search (the traditional Ctrl + F), string similarity (Levenshtein's distance) and cosine similarity (using embeddings models).
