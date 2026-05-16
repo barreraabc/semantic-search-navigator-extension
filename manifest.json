@@ -9,7 +9,6 @@
   "permissions": ["storage", "activeTab", "scripting", "tabs"],
   "host_permissions": ["<all_urls>"],
   "action": {
-    "default_popup": "popup.html",
     "default_title": "Provide more search options to the traditional Ctrl+F",
     "default_icon": {
       "16": "/images/advanced_search16.png",
