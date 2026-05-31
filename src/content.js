@@ -7,6 +7,7 @@
   const HIGHLIGHT_STYLE_ID = 'advanced-search-highlight-styles';
   const PANEL_TEMPLATE_GLOBAL_KEY = 'ADVANCED_SEARCH_PANEL_HTML';
   const LITERAL_SEARCH_ENGINE_GLOBAL_KEY = 'LITERAL_SEARCH_ENGINE';
+  const FUZZY_SEARCH_ENGINE_GLOBAL_KEY = 'FUZZY_SEARCH_ENGINE';
   const QUERY_INDEX = 0;
   const SEARCH_DEBOUNCE_MS = 500;
 
@@ -19,6 +20,8 @@
   if (!literalSearchEngine) {
     return;
   }
+
+  const fuzzySearchEngine = window[FUZZY_SEARCH_ENGINE_GLOBAL_KEY];
 
   const host = document.createElement('div');
   host.id = HOST_ID;
@@ -56,14 +59,29 @@
     return;
   }
 
-  const state = literalSearchEngine.initializeHighlightState();
-  const enginePlaceholders = ['Search exact term...', 'Search approximate term...', 'Search by meaning...'];
+  const engineDefinitions = [
+    {
+      placeholder: 'Search exact term...',
+      engine: literalSearchEngine,
+    },
+    {
+      placeholder: 'Search approximate term...',
+      engine: fuzzySearchEngine || literalSearchEngine,
+    },
+    {
+      placeholder: 'Search by meaning...',
+      engine: literalSearchEngine,
+    },
+  ];
+
+  let currentEngine = engineDefinitions[0].engine;
+  let state = currentEngine.initializeHighlightState();
   let selectedEngineIndex = 0;
   let searchDebounceTimer = null;
 
   function runHighlight() {
     const query = input.value.trim();
-    literalSearchEngine.highlight(state, query, QUERY_INDEX);
+    currentEngine.highlight(state, query, QUERY_INDEX);
     updateMatchCounter();
   }
 
@@ -73,11 +91,19 @@
       searchDebounceTimer = null;
     }
 
-    literalSearchEngine.unhighlight(QUERY_INDEX);
+    currentEngine.unhighlight(QUERY_INDEX);
     state.totalMatches = 0;
     state.focusIndex = 0;
     state.nodes = [document.createElement('span')];
     updateMatchCounter();
+  }
+
+  function switchEngine(nextEngineIndex) {
+    clearHighlights();
+    selectedEngineIndex = nextEngineIndex;
+    currentEngine = engineDefinitions[selectedEngineIndex].engine;
+    state = currentEngine.initializeHighlightState();
+    input.placeholder = engineDefinitions[selectedEngineIndex].placeholder;
   }
 
   function updateMatchCounter() {
@@ -108,19 +134,19 @@
   });
 
   prevEngineBtn.addEventListener('click', () => {
-    selectedEngineIndex =
+    const nextEngineIndex =
       selectedEngineIndex === 0
-        ? enginePlaceholders.length - 1
+        ? engineDefinitions.length - 1
         : selectedEngineIndex - 1;
-    input.placeholder = enginePlaceholders[selectedEngineIndex];
+    switchEngine(nextEngineIndex);
   });
 
   nextEngineBtn.addEventListener('click', () => {
-    selectedEngineIndex =
-      selectedEngineIndex === enginePlaceholders.length - 1
+    const nextEngineIndex =
+      selectedEngineIndex === engineDefinitions.length - 1
         ? 0
         : selectedEngineIndex + 1;
-    input.placeholder = enginePlaceholders[selectedEngineIndex];
+    switchEngine(nextEngineIndex);
   });
 
   prevMatchBtn.addEventListener('click', () => {
@@ -131,7 +157,7 @@
 
     const previousIndex =
       state.focusIndex <= 1 ? state.totalMatches : state.focusIndex - 1;
-    literalSearchEngine.focusHighlight(state, previousIndex, QUERY_INDEX);
+    currentEngine.focusHighlight(state, previousIndex, QUERY_INDEX);
     updateMatchCounter();
   });
 
@@ -143,7 +169,7 @@
 
     const nextIndex =
       state.focusIndex >= state.totalMatches ? 1 : state.focusIndex + 1;
-    literalSearchEngine.focusHighlight(state, nextIndex, QUERY_INDEX);
+    currentEngine.focusHighlight(state, nextIndex, QUERY_INDEX);
     updateMatchCounter();
   });
 
