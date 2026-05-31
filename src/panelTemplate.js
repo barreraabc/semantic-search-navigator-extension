@@ -109,6 +109,10 @@ window.ADVANCED_SEARCH_PANEL_HTML = `
       transform: translate(-65%, -50%) rotate(45deg);
     }
 
+    .nav-btn.nav-left::before {
+      transform: translate(-35%, -50%) rotate(-135deg);
+    }
+
     .nav-btn:hover {
       background: #666;
     }
@@ -172,7 +176,8 @@ window.ADVANCED_SEARCH_PANEL_HTML = `
     }
   </style>
   <div class="panel" role="dialog" aria-label="Literal search controls">
-    <button id="toggleEngineBtn" class="nav-btn nav-right" aria-label="Toggle search engine"></button>
+    <button id="prevEngineBtn" class="nav-btn nav-left" aria-label="Previous search engine"></button>
+    <button id="nextEngineBtn" class="nav-btn nav-right" aria-label="Next search engine"></button>
     <input type="text" id="searchBar" placeholder="Search exact term...">
     <span id="matchCounter" class="match-counter" aria-label="Current match index">0/0</span>
     <span class="panel-divider" aria-hidden="true"></span>

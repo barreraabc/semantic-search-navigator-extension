@@ -38,15 +38,27 @@
 
   const input = shadowRoot.querySelector('#searchBar');
   const closeButton = shadowRoot.querySelector('.close');
+  const prevEngineBtn = shadowRoot.querySelector('#prevEngineBtn');
+  const nextEngineBtn = shadowRoot.querySelector('#nextEngineBtn');
   const prevMatchBtn = shadowRoot.querySelector('#prevMatchBtn');
   const nextMatchBtn = shadowRoot.querySelector('#nextMatchBtn');
   const matchCounter = shadowRoot.querySelector('#matchCounter');
 
-  if (!input || !closeButton || !prevMatchBtn || !nextMatchBtn || !matchCounter) {
+  if (
+    !input ||
+    !closeButton ||
+    !prevEngineBtn ||
+    !nextEngineBtn ||
+    !prevMatchBtn ||
+    !nextMatchBtn ||
+    !matchCounter
+  ) {
     return;
   }
 
   const state = literalSearchEngine.initializeHighlightState();
+  const enginePlaceholders = ['Search exact term...', 'Search approximate term...', 'Search by meaning...'];
+  let selectedEngineIndex = 0;
   let searchDebounceTimer = null;
 
   function runHighlight() {
@@ -93,6 +105,22 @@
     if (event.key === 'Enter') {
       runHighlight();
     }
+  });
+
+  prevEngineBtn.addEventListener('click', () => {
+    selectedEngineIndex =
+      selectedEngineIndex === 0
+        ? enginePlaceholders.length - 1
+        : selectedEngineIndex - 1;
+    input.placeholder = enginePlaceholders[selectedEngineIndex];
+  });
+
+  nextEngineBtn.addEventListener('click', () => {
+    selectedEngineIndex =
+      selectedEngineIndex === enginePlaceholders.length - 1
+        ? 0
+        : selectedEngineIndex + 1;
+    input.placeholder = enginePlaceholders[selectedEngineIndex];
   });
 
   prevMatchBtn.addEventListener('click', () => {
